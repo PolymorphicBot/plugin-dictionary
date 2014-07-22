@@ -1,5 +1,4 @@
-import "urban.dart" as urban;
-import "wordnik.dart" as wordnik;
+import "dictionary.dart";
 
 import 'package:plugins/plugin.dart';
 import 'dart:isolate';
@@ -35,6 +34,10 @@ void handle_command(data) {
       } else {
         var word = args.join(" ");
         wordnik.define(word).then((def) {
+          if (def == null) {
+            reply("> Failed to Get Definition!");
+            return;
+          }
           reply("> ${def["word"]}: ${def["definition"]}");
         });
       }
@@ -46,6 +49,10 @@ void handle_command(data) {
       } else {
         var word = args.join(" ");
         urban.define(word).then((def) {
+          if (def == null) {
+            reply("> Failed to Get Definition!");
+            return;
+          }
           reply("> ${def["word"]}: ${def["definition"]}");
         });
       }
