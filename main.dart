@@ -6,6 +6,9 @@ BotConnector bot;
 EventManager eventManager;
 
 void main(List<String> args, port) {
+  bot = new BotConnector(port);
+  eventManager = bot.createEventManager();
+  
   print("[Dictionary] Loading");
   
   eventManager.command("define", (event) {
