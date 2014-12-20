@@ -1,61 +1,40 @@
 import "dictionary.dart";
 
-import 'package:plugins/plugin.dart';
-import 'dart:isolate';
+import "package:polymorphic_bot/api.dart";
 
-Receiver recv;
+BotConnector bot;
+EventManager eventManager;
 
-void main(List<String> args, SendPort port) {
+void main(List<String> args, port) {
   print("[Dictionary] Loading");
-  recv = new Receiver(port);
-
-  recv.listen((data) {
-    if (data["event"] == "command") {
-      handle_command(data);
+  
+  eventManager.command("define", (event) {
+    if (event.args.isEmpty) {
+      event.reply("> Usage: define <word>");
+    } else {
+      var word = event.args.join(" ");
+      wordnik.define(word).then((definition) {
+        if (definition == null) {
+          event.reply("> No Definition Found.");
+        } else {
+          event.reply("${definition["word"]}: ${definition["definition"]}");
+        }
+      });
     }
   });
-}
-
-void handle_command(data) {
-  void reply(String message) {
-    recv.send({
-      "network": data["network"],
-      "target": data["target"],
-      "command": "message",
-      "message": message
-    });
-  }
-
-  switch (data["command"]) {
-    case "define":
-      var args = data["args"];
-      if (args.length == 0) {
-        reply("> Usage: define <word>");
-      } else {
-        var word = args.join(" ");
-        wordnik.define(word).then((def) {
-          if (def == null) {
-            reply("> Failed to Get Definition!");
-            return;
-          }
-          reply("> ${def["word"]}: ${def["definition"]}");
-        });
-      }
-      break;
-    case "urban":
-      var args = data["args"];
-      if (args.length == 0) {
-        reply("> Usage: urban <word>");
-      } else {
-        var word = args.join(" ");
-        urban.define(word).then((def) {
-          if (def == null) {
-            reply("> Failed to Get Definition!");
-            return;
-          }
-          reply("> ${def["word"]}: ${def["definition"]}");
-        });
-      }
-      break;
-  }
+  
+  eventManager.command("urban", (event) {
+    if (event.args.isEmpty) {
+      event.reply("> Usage: urban <word>");
+    } else {
+      var word = event.args.join(" ");
+      urban.define(word).then((definition) {
+        if (definition == null) {
+          event.reply("> No Definition Found.");
+        } else {
+          event.reply("${definition["word"]}: ${definition["definition"]}");
+        }
+      });
+    }
+  });
 }
