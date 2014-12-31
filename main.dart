@@ -3,15 +3,13 @@ import "dictionary.dart";
 import "package:polymorphic_bot/api.dart";
 
 BotConnector bot;
-EventManager eventManager;
 
-void main(List<String> args, port) {
-  bot = new BotConnector(port);
-  eventManager = bot.createEventManager();
+void main(List<String> args, Plugin plugin) {
+  bot = plugin.getBot();
   
   print("[Dictionary] Loading");
   
-  eventManager.command("define", (event) {
+  bot.command("define", (event) {
     if (event.args.isEmpty) {
       event.reply("> Usage: define <word>");
     } else {
@@ -26,7 +24,7 @@ void main(List<String> args, port) {
     }
   });
   
-  eventManager.command("urban", (event) {
+  bot.command("urban", (event) {
     if (event.args.isEmpty) {
       event.reply("> Usage: urban <word>");
     } else {
