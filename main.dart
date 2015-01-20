@@ -4,7 +4,8 @@ import "package:polymorphic_bot/api.dart";
 
 BotConnector bot;
 
-void main(List<String> args, Plugin plugin) {
+void main(List<String> args, port) {
+  var plugin = polymorphic(args, port);
   bot = plugin.getBot();
   
   print("[Dictionary] Loading");
